@@ -26,7 +26,24 @@ def main():
     # Find the Elf carrying the most Calories.
     # How many total Calories is that Elf carrying?
     # In other words: what is the biggest sum in the list?
-    print(max(calories_sum_list))
+    top_calories = max(calories_sum_list)
+    print("Top calories: " + str(top_calories))
+
+    #
+    # Part 2
+    #
+    top_three_sum = 0
+    # Get top 3 values
+    for _ in range(3):
+        # Get the max value
+        top_calories = max(calories_sum_list)
+        # Add the value to the sum
+        top_three_sum += top_calories
+        # Remove value from the list, so that next time the second, third... value is found
+        calories_sum_list.remove(top_calories)
+        print("Top 3: " + str(top_calories))
+
+    print("Top three sum: " + str(top_three_sum))
 
 
 if __name__ == '__main__':
