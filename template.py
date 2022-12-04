@@ -1,3 +1,4 @@
+import sys
 
 # Print debug messages
 DEBUG = False
@@ -5,7 +6,7 @@ DEBUG = False
 
 def debug(*args, **kwargs):
     if DEBUG:
-        print(*args, **kwargs)
+        print(*args, file=sys.stderr, **kwargs)
 
 
 def main():
