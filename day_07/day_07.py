@@ -5,6 +5,8 @@ DEBUG = False
 
 # Constants
 MAX_DIR_SIZE = 100000
+TOTAL_SIZE_AVAILABLE = 70000000
+FREE_SIZE_REQUIRED = 30000000
 
 
 def debug(*args, **kwargs):
@@ -113,6 +115,18 @@ def get_sum(my_dir=DIR_ROOT):
     return size_sum
 
 
+def get_dirs(min_size, my_dir=DIR_ROOT):
+    my_list = []
+    if my_dir.size >= min_size:
+        my_list.append(my_dir)
+
+    for item in my_dir.content:
+        if not isinstance(item, Dir):
+            continue
+        my_list.extend(get_dirs(min_size, item))
+    return my_list
+
+
 def main():
     with open('input_day_07.txt') as file_input:
         for line in file_input:
@@ -129,6 +143,27 @@ def main():
     # Sum of dir sizes smaller or equal MAX_DIR_SIZE = 100000
     sizes_sum = get_sum()
     print('Sum: ' + str(sizes_sum))
+
+    # Part 02
+    debug('\n--- Part 2 ---')
+    debug('Total size on device: ' + str(TOTAL_SIZE_AVAILABLE).rjust(8))
+    debug('Free space needed:    ' + str(FREE_SIZE_REQUIRED).rjust(8))
+    debug('Current used size:    ' + str(DIR_ROOT.size).rjust(8))
+
+    size_free = TOTAL_SIZE_AVAILABLE - DIR_ROOT.size
+    debug('Current free space:   ' + str(size_free).rjust(8))
+
+    min_size_to_delete = FREE_SIZE_REQUIRED - size_free
+    debug('Need to delete:       ' + str(min_size_to_delete).rjust(8))
+
+    # Get list of all dirs with size required to delete OR BIGGER
+    big_dir_list = get_dirs(min_size_to_delete)
+    debug('Big enough dirs:\n\t' + '\n\t'.join([x.name + ' (' + str(x.size) + ')' for x in big_dir_list]))
+    # Get dir from the list with the LOWEST size
+    from operator import attrgetter
+    smallest_dir = min(big_dir_list, key=attrgetter('size'))
+    debug('Dir: ' + smallest_dir.name + '\tsize: ' + str(smallest_dir.size))
+    print('Size of dir to delete: ' + str(smallest_dir.size))
 
 
 if __name__ == '__main__':
