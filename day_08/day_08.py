@@ -54,10 +54,21 @@ def main():
             # for that, when I look left or up, I will need lists in a reverse order
             left_side.reverse()
             up_side.reverse()
-            left_distance = next((i for i, v in enumerate(left_side) if v >= field), 0)
-            right_distance = next((i for i, v in enumerate(right_side) if v >= field), 0)
-            up_distance = next((i for i, v in enumerate(up_side) if v >= field), 0)
-            down_distance = next((i for i, v in enumerate(down_side) if v >= field), 0)
+            #
+            # FIX:
+            #
+            # Need to add +1 to the index
+            # if the view is blocked immediately by the adjacent field
+            # the counted distance should be 1
+            # but the index in the list is 0
+            #
+            # Also there should only be 0 if there are no trees in the direction (only border fields)
+            # so if no field is blocking the view, the distance should be the number of fields in that direction
+            # and not 0
+            left_distance = next((i + 1 for i, v in enumerate(left_side) if v >= field), len(left_side))
+            right_distance = next((i + 1 for i, v in enumerate(right_side) if v >= field), len(right_side))
+            up_distance = next((i + 1 for i, v in enumerate(up_side) if v >= field), len(up_side))
+            down_distance = next((i + 1 for i, v in enumerate(down_side) if v >= field), len(down_side))
             score = left_distance * right_distance * up_distance * down_distance
             # if score != 0:
             #     debug(score)
