@@ -1,7 +1,7 @@
 import sys
 
 # Print debug messages
-DEBUG = True
+DEBUG = False
 
 # Constants
 FIELD_INVISIBLE = -1
@@ -76,7 +76,7 @@ def main():
                 top_score = score
                 debug(top_score)
     print('Highest scenic score: ' + str(top_score))
-    exit(0)
+    # exit(0)
     #
     # END: Part 2
     #
