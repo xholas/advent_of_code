@@ -31,12 +31,44 @@ def main():
     # - that would save me from looking at the whole line/column each time
     # but that would also require some more complex structures to save the info
 
-    debug(str(len(grid)))
-    debug(str(len(grid[0])))
-    debug(str(len(grid) * len(grid[0])))
+    # debug(str(len(grid)))
+    # debug(str(len(grid[0])))
+    # debug(str(len(grid) * len(grid[0])))
 
     # Considering the grid is relatively small
     # I may use any approach and not overthink this
+
+    #
+    # Part 2
+    #
+
+    top_score = 0
+    for y, row in enumerate(grid):
+        for x, field in enumerate(row):
+            left_side = row[:x]
+            right_side = row[x+1:]
+            column = [r[x] for r in grid]
+            up_side = column[:y]
+            down_side = column[y+1:]
+            # I want to look for closest tree that fulfills come condition
+            # for that, when I look left or up, I will need lists in a reverse order
+            left_side.reverse()
+            up_side.reverse()
+            left_distance = next((i for i, v in enumerate(left_side) if v >= field), 0)
+            right_distance = next((i for i, v in enumerate(right_side) if v >= field), 0)
+            up_distance = next((i for i, v in enumerate(up_side) if v >= field), 0)
+            down_distance = next((i for i, v in enumerate(down_side) if v >= field), 0)
+            score = left_distance * right_distance * up_distance * down_distance
+            # if score != 0:
+            #     debug(score)
+            if score > top_score:
+                top_score = score
+                debug(top_score)
+    print('Highest scenic score: ' + str(top_score))
+    exit(0)
+    #
+    # END: Part 2
+    #
 
     # So I will just look for all the values in row/column for each field
     # and change the value of invisible fields to -1 while visible will keep their size for following lookups
