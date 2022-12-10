@@ -25,6 +25,7 @@ def main():
     inst_wait = 0
     reg_x = 1
     score_sum = 0
+    # with open('input_test.txt') as file_input:
     with open('input_day_10.txt') as file_input:
         while cycle <= CY_STOP:
             current_cycle = cycle + 1
@@ -36,16 +37,21 @@ def main():
                     reg_x += inst_value
                     debug('\tAdded ' + str(inst_value) + ' - new reg value is ' + str(reg_x))
 
-                # At this point the value for REG X is valid for this cycle
-                debug('--- REG X value: ' + str(reg_x))
+            # BUGFIX: Following code has to run in each cycle UNCONDITIONALLY
 
-                if current_cycle in range(CY_START, CY_STOP + 1, CY_STEP):
-                    score = current_cycle * reg_x
-                    debug('  - Cycle ' + str(current_cycle) +
-                          ' | REG X value: ' + str(reg_x) +
-                          ' | Score: ' + str(score) + ' ---------------------------------------------')
-                    score_sum += score
+            # At this point the value for REG X is valid for this cycle
+            debug('--- REG X value: ' + str(reg_x))
 
+            if current_cycle in range(CY_START, CY_STOP + 1, CY_STEP):
+                score = current_cycle * reg_x
+                debug('  - Cycle ' + str(current_cycle) +
+                      ' | REG X value: ' + str(reg_x) +
+                      ' | Score: ' + str(score) + ' ---------------------------------------------')
+                score_sum += score
+
+            # BUGFIX: But the next part needs the condition again
+
+            if inst_wait <= 0:
                 # Load new instruction
                 debug('\tLoading next instruction.')
                 line = file_input.readline().strip()  # Strip needed - this is probably due to input using CR/LF
