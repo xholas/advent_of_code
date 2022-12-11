@@ -46,6 +46,7 @@ def main():
     crt_image = []
 
     # with open('input_test.txt') as file_input:
+    # with open('input_test_MB.txt') as file_input:
     with open('input_day_10.txt') as file_input:
         while cycle < CRT_LINES * CRT_COLUMNS:  # There should be 6 lines with 40 pixels per line - then this may stop
             current_cycle = cycle + 1
