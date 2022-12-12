@@ -68,10 +68,13 @@ class Monkey:
 
     def turn(self):
         # Turn is when monkey inspects and throws all its items
-        for item in self.items:
+        while len(self.items) != 0:  # Must not loop over items in changing list
             # Inspect item
             # - take item from list and see the worry level
-            item_worry_level = self.items.pop()
+            # debug('-------------------------------------------------')
+            # debug('Monke has: ' + str(self.items))
+            item_worry_level = self.items.pop(0)  # Really? pop() pops last item? not first?
+            # debug('Monke gets: ' + str(self.items))
             # - raise worry level based on the operation
             item_worry_level = self.inspect(item_worry_level)
 
@@ -86,7 +89,10 @@ class Monkey:
                 raise Exception('Monkey! Are you with us?!')
 
             # Throw an item
+            # debug('-------------------------------------------------')
+            # debug('Monke has: ' + str(target_monkey.items))
             target_monkey.items.append(item_worry_level)
+            # debug('Monke gets: ' + str(target_monkey.items))
 
 
 def setup_monkey(monkey_info, monkeys_list):
@@ -128,6 +134,7 @@ def setup_monkey(monkey_info, monkeys_list):
 
 def main():
     monkeys = []
+    # with open('input_test.txt') as file_input:
     with open('input_day_11.txt') as file_input:
         input_all = file_input.read()
 
@@ -154,6 +161,9 @@ def main():
                 raise Exception('This is no monkey!')
             # Turn is when monkey inspects and throws all its items
             monkey.turn()
+        debug('\nAfter round: ' + str(current_round + 1))
+        for num, monkey in enumerate(monkeys):
+            debug('Monkey ' + str(num) + ': ' + str(monkey.items))
 
     debug('\nThere are ' + str(len(monkeys)) + ' monkeys. \nFirst is:')
     debug(monkeys[1])
