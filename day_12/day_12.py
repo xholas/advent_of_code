@@ -1,7 +1,7 @@
 import sys
 
 # Print debug messages
-DEBUG = True
+DEBUG = False
 
 PIX_ABOVE = "█"
 PIX_UPPER = "▓"
@@ -150,8 +150,8 @@ def main():
     field.steps = 0
     fields = [field]
     cnt = 0
-    global DEBUG
-    DEBUG = False
+    # global DEBUG
+    # DEBUG = False
     while len(fields) != 0:
         cnt += 1
         field = fields.pop(0)
@@ -180,7 +180,7 @@ def main():
         if len(fields) > 100:
             debug('HARD BREAK')
             break
-    DEBUG = True
+    # DEBUG = True
     debug('Processed ' + str(cnt) + ' fields')
     debug('There is ' + str(len(grid) * len(grid[0]) - cnt) + ' inaccessible fields.')
 
