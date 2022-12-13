@@ -92,6 +92,53 @@ def update_field(next, previous):
     return True
 
 
+def find_path(field_start):
+    # From start to end try paths
+    field_start.steps = 0
+    fields = [field_start]
+    cnt = 0
+    # global DEBUG
+    # DEBUG = False
+    while len(fields) != 0:
+        cnt += 1
+        field = fields.pop(0)
+        debug(str(field))
+        if field.can_go_up():
+            debug('UP')
+            if update_field(field.up, field):
+                if field.up not in fields:
+                    fields.append(field.up)
+        if field.can_go_down():
+            debug('DOWN')
+            if update_field(field.down, field):
+                if field.down not in fields:
+                    fields.append(field.down)
+        if field.can_go_left():
+            debug('LEFT')
+            if update_field(field.left, field):
+                if field.left not in fields:
+                    fields.append(field.left)
+        if field.can_go_right():
+            debug('RIGHT')
+            if update_field(field.right, field):
+                if field.right not in fields:
+                    fields.append(field.right)
+        debug('Fields in line: ' + str(len(fields)))
+        if len(fields) > 100:
+            debug('HARD BREAK')
+            break
+    # DEBUG = True
+    debug('Processed ' + str(cnt) + ' fields')
+    # debug('There is ' + str(len(grid) * len(grid[0]) - cnt) + ' inaccessible fields.')
+
+
+def clear_map(grid):
+    for row in grid:
+        for field in row:
+            field.steps = None
+            field.prev = None
+
+
 def main():
     position_current = None
     position_target = None
@@ -144,48 +191,28 @@ def main():
 
     debug('FIELDS COUNT: ' + str(len(grid) * len(grid[0])))
 
-    # From start to end try paths
-    x, y = position_current
-    field = grid[y][x]
-    field.steps = 0
-    fields = [field]
-    cnt = 0
-    # global DEBUG
-    # DEBUG = False
-    while len(fields) != 0:
-        cnt += 1
-        field = fields.pop(0)
-        debug(str(field))
-        if field.can_go_up():
-            debug('UP')
-            if update_field(field.up, field):
-                if field.up not in fields:
-                    fields.append(field.up)
-        if field.can_go_down():
-            debug('DOWN')
-            if update_field(field.down, field):
-                if field.down not in fields:
-                    fields.append(field.down)
-        if field.can_go_left():
-            debug('LEFT')
-            if update_field(field.left, field):
-                if field.left not in fields:
-                    fields.append(field.left)
-        if field.can_go_right():
-            debug('RIGHT')
-            if update_field(field.right, field):
-                if field.right not in fields:
-                    fields.append(field.right)
-        debug('Fields in line: ' + str(len(fields)))
-        if len(fields) > 100:
-            debug('HARD BREAK')
-            break
-    # DEBUG = True
-    debug('Processed ' + str(cnt) + ' fields')
-    debug('There is ' + str(len(grid) * len(grid[0]) - cnt) + ' inaccessible fields.')
+    # Part 2 - find path for each field with height 0 as starting point
+    shortest_length = None
+    for row in grid:
+        for field in row:
+            if field.height == 0:
+                clear_map(grid)  # Clear data saved for previous path
+                find_path(field)
+                x, y = position_target
+                path_lenght = grid[y][x].steps
+                if path_lenght is None:
+                    debug('There is no path.')
+                    continue
+                # global DEBUG
+                # DEBUG = True
+                debug('Found path with ' + str(path_lenght) + ' steps.')
+                # DEBUG = False
+                if shortest_length is None:
+                    shortest_length = path_lenght
+                if path_lenght < shortest_length:
+                    shortest_length = path_lenght
 
-    x, y = position_target
-    print('Path length is ' + str(grid[y][x].steps))
+    print('Shortest path is ' + str(shortest_length) + ' steps long.')
 
 
 if __name__ == '__main__':
