@@ -3,7 +3,8 @@
 
 For implementing this simulation I used [p5.js](https://p5js.org/).  
 The result is available online 
-[here](https://editor.p5js.org/xholas/full/Tz8cZ7-Tr).
+[here](https://editor.p5js.org/xholas/full/Tz8cZ7-Tr).  
+Part 2 is [here](https://editor.p5js.org/xholas/full/EveJb_g8E).
 
 ## Part 1
 
