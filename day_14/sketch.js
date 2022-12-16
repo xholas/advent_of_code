@@ -1,8 +1,10 @@
 /* jshint esversion: 11 */
 
-const SCALE = 10;
+const SCALE = 4;
 const SPEED = 60;
-const FRAME_STEPS = 250; // How much steps are simulate per frame
+const FRAME_STEPS = 10000; // How much steps are simulate per frame
+
+const SIDE_SPACE = 100; // How much fields to show around the original grid
 
 let final_frame = false; // Flag - final frame should be rendered
 
@@ -91,20 +93,23 @@ function setup() {
   //             + ' / Y from ' + grid_y_min + ' to ' + grid_y_max);
 
   // Setup drawing canvas
-  createCanvas((grid_x_max - grid_x_min + 3) * SCALE, (grid_y_max - grid_y_min + 3) * SCALE);
+  createCanvas(
+    (grid_x_max - grid_x_min + 3 + SIDE_SPACE * 2) * SCALE,
+    (grid_y_max - grid_y_min + 3 + 2) * SCALE
+  );
   frameRate(SPEED);
 
   // draw() runs automatically after this
 }
 
-function draw_field(grid_x, grid_y, sand_override=false) {
+function draw_field(grid_x, grid_y, sand_override=false, force_rock=false) {
   // Compute graphics coordinates of grid field
-  let x = (grid_x - grid_x_min + 1) * SCALE;
+  let x = (grid_x - grid_x_min + 1 + SIDE_SPACE) * SCALE;
   let y = (grid_y - grid_y_min + 1) * SCALE;
   let size = 1 * SCALE;
 
   // Setup drawing style
-  if (grid[grid_x] && grid[grid_x][grid_y] == ROCK) {
+  if (force_rock || (grid[grid_x] && grid[grid_x][grid_y] == ROCK)) {
     stroke(0);
     fill(64);
   }
@@ -133,43 +138,56 @@ function move_sand() {
   let sand_x = sand_active[0];
   let sand_y = sand_active[1];
 
-  // Sand out of range
-  // means end of simulation
-  if (sand_x < grid_x_min || sand_x > grid_x_max || sand_y > grid_y_max) {
-    // Print result
-    console.log('Stable sand count: ' + sand_stable_cnt);
-    // Stop simulation
-    noLoop();
-    final_frame = true;
-    draw();
-    return;
+  let next_sand = false;
+
+  // Sand on the ground
+  // set stable and continue with next
+  if (sand_y > grid_y_max) {
+    next_sand = true;
   }
 
-  // move down
-  if (!grid[sand_x] || !grid[sand_x][sand_y + 1]) {
-    sand_active[1]++;
-    return;
+  if (!next_sand) {
+    // move down
+    if (!grid[sand_x] || !grid[sand_x][sand_y + 1]) {
+      sand_active[1]++;
+      return;
+    }
+    // move left down
+    else if (!grid[sand_x - 1] || !grid[sand_x - 1][sand_y + 1]) {
+      sand_active[0]--;
+      sand_active[1]++;
+      return;
+    }
+    // move right down
+    else if (!grid[sand_x + 1] || !grid[sand_x + 1][sand_y + 1]) {
+      sand_active[0]++;
+      sand_active[1]++;
+      return;
+    }
+    else {
+      next_sand = true;
+    }
   }
-  // move left down
-  else if (!grid[sand_x - 1] || !grid[sand_x - 1][sand_y + 1]) {
-    sand_active[0]--;
-    sand_active[1]++;
-    return;
-  }
-  // move right down
-  else if (!grid[sand_x + 1] || !grid[sand_x + 1][sand_y + 1]) {
-    sand_active[0]++;
-    sand_active[1]++;
-    return;
-  }
+
   // stop movement, start next
-  else {
+  if (next_sand) {
     // Set stable sand in grid
     sand_stable_cnt++;
     if (!Array.isArray(grid[sand_x])) {
       grid[sand_x] = [];
     }
     grid[sand_x][sand_y] = SAND;
+
+    // If this is the source field, end simulation
+    if (sand_x == SAND_SOURCE[0] && sand_y == SAND_SOURCE[1]) {
+      // Print result
+      console.log('Stable sand count: ' + sand_stable_cnt);
+      // Stop simulation
+      noLoop();
+      final_frame = true;
+      draw();
+      return;
+    }
 
     // Create new sand
     sand_active = [...SAND_SOURCE];
@@ -193,6 +211,11 @@ function draw() {
       // let field = col[y];
       draw_field(x, y);
     }
+  }
+
+  // Draw the floor line
+  for (let x = grid_x_min - SIDE_SPACE - 1; x <= grid_x_max + SIDE_SPACE + 1; x++) {
+    draw_field(x, grid_y_max + 2, false, true);
   }
 
   draw_sand();
