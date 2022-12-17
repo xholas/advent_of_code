@@ -247,5 +247,5 @@ after 93 units of sand come to rest:
 ```
 
 Using your scan, simulate the falling sand 
-until the source of the sand becomes blocked. 
+until the source of the sand becomes blocked.  
 **_How many units of sand come to rest?_**
